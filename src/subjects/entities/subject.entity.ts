@@ -7,4 +7,8 @@ export class Subject {
 
   @Column()
   subject_name : string;
+
+  @Column()
+  subject_credits : number;
+
 }
