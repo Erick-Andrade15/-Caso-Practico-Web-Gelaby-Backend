@@ -7,6 +7,7 @@ import { TeachersModule } from './teachers/teachers.module';
 import { CareersModule } from './careers/careers.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { CoursesModule } from './courses/courses.module';
+import { TeachersDetailsModule } from './teachers-details/teachers-details.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CoursesModule } from './courses/courses.module';
     CareersModule,
     SubjectsModule,
     CoursesModule,
+    TeachersDetailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
