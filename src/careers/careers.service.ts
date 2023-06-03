@@ -4,20 +4,20 @@ import { UpdateCareerDto } from './dto/update-career.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Career } from './entities/career.entity';
-
+import { Course } from 'src/courses/entities/course.entity';
 
 @Injectable()
 export class CareersService {
-
   constructor(
     @InjectRepository(Career)
     private careersRepository: Repository<Career>,
+    @InjectRepository(Course) // Inyecta el repositorio Course
+    private coursesRepository: Repository<Course>,
   ) {}
 
-
   create(createCareerDto: CreateCareerDto) {
-    const subject = this.careersRepository.create(createCareerDto);
-    return this.careersRepository.save(subject);
+    const career = this.careersRepository.create(createCareerDto);
+    return this.careersRepository.save(career);
   }
 
   findAll() {
@@ -35,23 +35,36 @@ export class CareersService {
   }
 
   async update(id: number, updateCareerDto: UpdateCareerDto) {
-    const subject = await this.careersRepository.findOne({
+    const career = await this.careersRepository.findOne({
       where: { career_id: id },
-    });;
-    if (!subject) {
-      throw new Error('Subject not found');
+    });
+    if (!career) {
+      throw new Error('Career not found');
     }
-    const updatedSubject = Object.assign(subject, updateCareerDto);
-    return this.careersRepository.save(updatedSubject);
+    const updatedCareer = Object.assign(career, updateCareerDto);
+    return this.careersRepository.save(updatedCareer);
   }
 
   async remove(id: number) {
-    const subject = await this.careersRepository.findOne({
+    const career = await this.careersRepository.findOne({
       where: { career_id: id },
     });
-    if (!subject) {
-      throw new Error('Subject not found');
+    if (!career) {
+      throw new Error('Career not found');
     }
-    return this.careersRepository.remove(subject);
+
+    // Actualizar los cursos asociados a la carrera eliminada
+    const courses = await this.coursesRepository.find({
+      where: { career: career.career_id },
+    });
+
+    if (courses.length > 0) {
+      for (const course of courses) {
+        course.career = null; // O asignar otro valor especial si lo deseas
+        await this.coursesRepository.save(course);
+      }
+    }
+
+    return this.careersRepository.remove(career);
   }
 }

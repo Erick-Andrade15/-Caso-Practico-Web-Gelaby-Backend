@@ -9,5 +9,3 @@ export class CreateSubjectDto {
   @Min(0, { message: 'Los créditos deben ser igual o mayores a 0' })
   subject_credits : number;
 }
-
-  
