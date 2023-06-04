@@ -8,6 +8,9 @@ import { CareersModule } from './careers/careers.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { CoursesModule } from './courses/courses.module';
 import { TeachersDetailsModule } from './teachers-details/teachers-details.module';
+import { LaboratoriesModule } from './laboratories/laboratories.module';
+import { LaboratoryStatusModule } from './laboratory_status/laboratory_status.module';
+import { LaboratoryAssignModule } from './laboratory_assign/laboratory_assign.module';
 
 @Module({
   imports: [
@@ -33,6 +36,9 @@ import { TeachersDetailsModule } from './teachers-details/teachers-details.modul
     SubjectsModule,
     CoursesModule,
     TeachersDetailsModule,
+    LaboratoriesModule,
+    LaboratoryStatusModule,
+    LaboratoryAssignModule,
   ],
   controllers: [AppController],
   providers: [AppService],

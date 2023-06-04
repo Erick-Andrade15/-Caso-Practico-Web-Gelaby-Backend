@@ -5,14 +5,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from './entities/teacher.entity';
 import { TeachersDetail } from 'src/teachers-details/entities/teachers-detail.entity';
+import { LaboratoryAssign } from 'src/laboratory_assign/entities/laboratory_assign.entity';
 
 @Injectable()
 export class TeachersService {
   constructor(
     @InjectRepository(Teacher)
     private teachersRepository: Repository<Teacher>,
-    @InjectRepository(TeachersDetail) // Inyecta el repositorio Course
+    @InjectRepository(TeachersDetail) // Inyecta el repositorio TEACHER DETAIL
     private teachersdetailRepository: Repository<TeachersDetail>,
+    @InjectRepository(LaboratoryAssign) // Inyecta el repositorio ASSING LABORATORY
+    private laboratoryassignRepository: Repository<LaboratoryAssign>,
   ) {}
 
   findAll() {
@@ -50,6 +53,10 @@ export class TeachersService {
       where: { teacher_id: id },
     });
 
+    if (!teacher) {
+      throw new Error('Teacher not found');
+    }
+
     // Actualizar los Detalle Curso asociados al Docente eliminada
     const teachersdetails = await this.teachersdetailRepository.find({
       where: { teacher: teacher.teacher_id },
@@ -62,9 +69,18 @@ export class TeachersService {
       }
     }
 
-    if (!teacher) {
-      throw new Error('Teacher not found');
+    // Actualizar los Asing Laboratory asociados al Laboratorio eliminada
+    const laboratoriesassigns = await this.laboratoryassignRepository.find({
+      where: { laboratory: teacher.teacher_id },
+    });
+
+    if (laboratoriesassigns.length > 0) {
+      for (const laboratoryassign of laboratoriesassigns) {
+        laboratoryassign.laboratory = null; // O asignar otro valor especial si lo deseas
+        await this.laboratoryassignRepository.save(laboratoriesassigns);
+      }
     }
+
     return this.teachersRepository.remove(teacher);
   }
 }
