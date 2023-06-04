@@ -9,7 +9,7 @@ export class TeachersDetail {
   teacher_detail_id: number;
 
   @Column()
-  teacher_detail_date: Date;
+  teacher_detail_date: string;
 
   @Column()
   teacher_detail_start_time: string;
