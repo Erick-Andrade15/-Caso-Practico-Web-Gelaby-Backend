@@ -11,6 +11,7 @@ import { TeachersDetailsModule } from './teachers-details/teachers-details.modul
 import { LaboratoriesModule } from './laboratories/laboratories.module';
 import { LaboratoryStatusModule } from './laboratory_status/laboratory_status.module';
 import { LaboratoryAssignModule } from './laboratory_assign/laboratory_assign.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { LaboratoryAssignModule } from './laboratory_assign/laboratory_assign.mo
     LaboratoriesModule,
     LaboratoryStatusModule,
     LaboratoryAssignModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
