@@ -28,9 +28,9 @@ export class UsersService {
     });
   }
 
-  findEmail(email: string) {
+  findPassword(password: string) {
     return this.usersRepository.findOne({
-      where: { user_email: email },
+      where: { user_password: password },
     });
   }
 
@@ -59,4 +59,23 @@ export class UsersService {
     }
     return this.usersRepository.remove(user);
   }
+
+
+  async saveResetToken(userId: number, resetToken: string): Promise<void> {
+    // Encuentra el usuario en la base de datos por el userId
+    const user = await this.usersRepository.findOne({
+      where: { user_id: userId },
+    });;
+
+    if (user) {
+      // Actualiza el campo del token de reset en el usuario
+      user.user_password = resetToken;
+
+      // Guarda los cambios en la base de datos
+      await this.usersRepository.save(user);
+    }
+  }
+
+
+
 }
