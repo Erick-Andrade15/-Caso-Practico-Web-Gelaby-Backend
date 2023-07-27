@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateLaboratoryAssignDto } from './dto/create-laboratory_assign.dto';
 import { UpdateLaboratoryAssignDto } from './dto/update-laboratory_assign.dto';
 import { LaboratoryAssign } from './entities/laboratory_assign.entity';
@@ -12,7 +12,31 @@ export class LaboratoryAssignService {
     private laboratoryAssignRepository: Repository<LaboratoryAssign>,
   ) {}
 
-  create(createLaboratoryAssignDto: CreateLaboratoryAssignDto) {
+  creaSte(createLaboratoryAssignDto: CreateLaboratoryAssignDto) {
+    const laboratoryAssign = this.laboratoryAssignRepository.create(
+      createLaboratoryAssignDto,
+    );
+    return this.laboratoryAssignRepository.save(laboratoryAssign);
+  }
+
+  async create(createLaboratoryAssignDto: CreateLaboratoryAssignDto) {
+    // Validación: Verificar si el profesor ya está asignado en otro laboratorio en la misma fecha
+    const existingAssignment =
+      await this.laboratoryAssignRepository.findOne({
+        where: {
+          lab_assign_date: createLaboratoryAssignDto.lab_assign_date,
+          laboratory: createLaboratoryAssignDto.lab_id,
+          teacher: createLaboratoryAssignDto.teacher_id,
+        },
+      });
+
+    if (existingAssignment) {
+      throw new ConflictException(
+        'El laboratorio ya está asignado en esa fecha.',
+      );
+    }
+
+    // Si el registro no existe, crea y guarda el nuevo registro
     const laboratoryAssign = this.laboratoryAssignRepository.create(
       createLaboratoryAssignDto,
     );
